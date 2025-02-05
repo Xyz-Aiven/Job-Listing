@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="static/styles.css">
+    <title>Job Listings</title>
+</head>
+<body>
+    <div class="job-listing-container">
+        <h1>Available Jobs</h1>
+        <ul>
+            {% for job in jobs %}
+                <li class="job-item">
+                    <h3>{{ job.title }}</h3>
+                    <p>{{ job.description }}</p>
+                    <p><small>Posted on: {{ job.date_posted.strftime('%Y-%m-%d') }}</small></p>
+                    {% if session.user_id %}
+                        <a href="{{ url_for('main.edit_job', job_id=job.id) }}">Edit</a>
+                    {% endif %}
+                    <h4>Applications:</h4>
+                    <ul>
+                        {% for application in applications[job.id] %}
+                            <li>
+                                <p><strong>Message:</strong> {{ application.message }}</p>
+                                <p><strong>Portfolio Link:</strong> <a href="{{ application.portfolio_link }}">{{ application.portfolio_link }}</a></p>
+                                <p><small>Submitted on: {{ application.date_submitted.strftime('%Y-%m-%d') }}</small></p>
+                            </li>
+                        {% else %}
+                            <li>No applications yet.</li>
+                        {% endfor %}
+                    </ul>
+                </li>
+            {% endfor %}
+        </ul>
+        <a href="/">Back to Home</a>
+    </div>
+</body>
+</html>

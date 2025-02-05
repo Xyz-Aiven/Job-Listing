@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="static/styles.css">
+    <title>Admin Code Entry</title>
+</head>
+<body>
+    <div class="form-container">
+        <h1>Enter Admin Code</h1>
+        <form method="POST" action="{{ url_for('main.check_admin_code') }}">
+            <input type="text" name="code" maxlength="5" placeholder="Enter Code" required>
+            <button type="submit">Submit</button>
+        </form>
+        <p><a href="/">Back to Home</a></p>
+    </div>
+</body>
+</html>

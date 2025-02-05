@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="static/styles.css">
+    <title>Job Portal</title>
+</head>
+<body>
+    <header>
+        <h1>Job Portal</h1>
+        <div>
+            {% if session.user_id %}
+                <!-- Logout Form -->
+                <form action="{{ url_for('main.logout') }}" method="POST" style="display:inline;">
+                    <button type="submit" class="logout-button">Logout</button> <!-- Apply the new class here -->
+                </form>
+                <div class="header-button"><a href="/add">Post a Job</a></div>
+                <div class="header-button"><a href="/jobs">List of Jobs</a></div>
+                <div class="header-button"><a href="/admin">Admin Panel</a></div>  <!-- Accessible by anyone -->
+            {% else %}
+                <div class="header-button"><a href="/login">Login</a></div>
+                <div class="header-button"><a href="/signup">Sign Up</a></div>
+            {% endif %}
+        </div>
+    </header>
+    
+    <div class="homepage-container">
+        <div class="clock-container">
+            <h2>Current Date and Time</h2>
+            <p id="date-time"></p>
+        </div>
+
+        <div class="job-listing-container">
+            <h1>Available Jobs</h1>
+            <p>Jobs Count: {{ jobs|length }}</p>
+            <ul>
+                {% if jobs and jobs|length > 0 %}
+                    {% for job in jobs %}
+                        <li class="job-item">
+                            <h3>{{ job.title }}</h3>
+                            <p>{{ job.description }}</p>
+                            <p><small>Posted on: {{ job.date_posted.strftime('%Y-%m-%d') }}</small></p>
+                            {% if session.user_id %}
+                                <button class="apply-button" onclick="toggleApplicationForm('{{ job.id }}')">Apply</button>
+                                <div class="application-form" id="application-form-{{ job.id }}" style="display:none;">
+                                    <h3>Write your application message</h3>
+                                    <textarea name="message" placeholder="Enter your application message here..."></textarea>
+                                    
+                                    <h3>Insert the link below for your portfolio</h3>
+                                    <input type="text" name="portfolio_link" placeholder="Enter your portfolio link here...">
+                                    
+                                    <form action="{{ url_for('main.apply', job_id=job.id) }}" method="POST">
+                                        <input type="hidden" name="message" id="hiddenMessage-{{ job.id }}">
+                                        <input type="hidden" name="portfolio_link" id="hiddenPortfolioLink-{{ job.id }}">
+                                        <button type="submit">Submit Application</button>
+                                    </form>
+                                </div>
+                            {% endif %}
+                        </li>
+                    {% endfor %}
+                {% else %}
+                    <li>No jobs available.</li>
+                {% endif %}
+            </ul>
+            <p><a href="/jobs">View All Jobs</a></p>
+        </div>
+
+        <!-- Inserted Image Section -->
+        <div class="image-section">
+            <h2>Apply now and get your job!</h2>
+            <img src="{{ url_for('static', filename='images/job_interview.png') }}" alt="Job Interview Illustration" class="featured-image">
+        </div>
+    </div>
+
+    <script src="static/script.js"></script>
+    <script>
+        function updateDateTime() {
+            const now = new Date();
+            const dateTimeString = now.toLocaleString();
+            document.getElementById('date-time').innerText = dateTimeString;
+        }
+        setInterval(updateDateTime, 1000);
+        updateDateTime();
+
+        function toggleApplicationForm(jobId) {
+            const form = document.getElementById(`application-form-${jobId}`);
+            form.style.display = form.style.display === 'none' ? 'block' : 'none';
+        }
+    </script>
+</body>
+</html>
